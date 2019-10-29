@@ -1,0 +1,141 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
+public class Problem59
+{
+    private static final String FILENAME = "C:\\Users\\daniel_nagel\\Desktop\\Euler Text\\59.txt";
+
+    private static BufferedReader br;
+    private static FileReader fr;
+
+    public static void main(String[] args)
+    {
+        //space is most common character
+        String text = readFile();
+        int[] arr = makeArr(text);
+        int[] translated = translate(arr, 101, 120, 112);  //randomly tried all 6 permutations
+        System.out.println(Arrays.toString(arr));
+        System.out.println(Arrays.toString(translated));
+        System.out.println(guess(translated));
+    }
+
+    public static String guess(int[] translated)
+    {
+        String ret = "";
+        for(int i = 0; i < translated.length; i++)
+        {
+            ret = ret + Character.toString((char) translated[i]);
+        }
+        return ret;
+    }
+    
+    public static int[] translate(int[]arr, int first, int mid, int last)
+    {
+        int[] translated = new int[arr.length];
+        for(int i = 0; i < translated.length; i++)
+        {
+            if(i % 3 == 0)
+                translated[i] = arr[i] ^ first;
+            else if(i % 3 == 1)
+                translated[i] = arr[i] ^ mid;
+            else
+                translated[i] = arr[i] ^ last;
+        }
+        
+        return translated;
+    }
+    
+    
+    public static int[] makeArr(String text)
+    {
+        int max = 0;
+        int temp = 0;
+        String piece = "";
+        int start = 0;
+        int comma = text.indexOf(",");
+        ArrayList<Integer> number = new ArrayList<Integer>();
+
+        while(true)
+        {
+            if(comma == -1)
+            {
+                piece = text.substring(start);
+                temp = Integer.parseInt(piece);
+                max = Math.max(max, temp);
+                number.add(temp);
+                break;
+            }
+            piece = text.substring(start, comma);
+            start = comma + 1;
+            comma = text.indexOf(",", comma + 1);
+
+            temp = Integer.parseInt(piece);
+            max = Math.max(max, temp);
+            number.add(temp);
+        }
+
+        /*
+        int[] freq = new int[max + 1];
+        for(int i = 0; i < number.size(); i += 3)
+        {
+            freq[number.get(i)]++;
+        }
+        System.out.println("Freq0:\n" + Arrays.toString(freq));
+        
+        freq = new int[max + 1];
+        for(int i = 1; i < number.size(); i += 3)
+        {
+            freq[number.get(i)]++;
+        }
+        System.out.println("Freq1:\n" + Arrays.toString(freq));
+        
+        freq = new int[max + 1];
+        for(int i = 2; i < number.size(); i += 3)
+        {
+            freq[number.get(i)]++;
+        }
+        System.out.println("Freq2:\n" + Arrays.toString(freq));    
+        */
+        int[] arr = new int[number.size()];
+        for(int i = 0; i < number.size(); i++)
+        {
+            arr[i] = number.get(i);
+        }
+        
+        return arr; 
+        
+    }
+
+    public static String readFile()
+    {
+        String str = "";
+        try
+        {
+            fr = new FileReader(FILENAME);
+            br = new BufferedReader(fr);
+            str = br.readLine();
+
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                if(br != null)
+                    br.close();
+                if(fr != null)
+                    fr.close();
+            }
+            catch(IOException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        return str;
+    }
+}
