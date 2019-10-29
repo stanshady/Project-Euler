@@ -1,0 +1,73 @@
+import java.util.*;
+
+public class Problem60
+{
+    public static int[] primes = Algorithm.sieve(1000000);
+
+    public static void main(String[] args)
+    {
+        int[][] pairs = findPairs(1000);
+        int[][] trips = findTrips(pairs, 1000);
+        for(int[] arr : trips)
+        {
+            System.out.println(Arrays.toString(arr));
+        }
+    }
+
+    public static int[][] findTrips(int[][] pairs, int upperBound)
+    {
+        ArrayList<int[]> trips = new ArrayList<int[]>();
+        int indexList = 0;
+        for(int i = 1; i < upperBound; i++)
+        {
+            int try1 = concat(primes[i], pairs[indexList][0]); 
+            int try2 = concat(primes[i], pairs[indexList][1]);
+            int try3 = concat(pairs[indexList][0], primes[i]);
+            int try4 = concat(pairs[indexList][1], primes[i]);
+            if(Algorithm.binSearch(primes, try1) > -1 &&
+                Algorithm.binSearch(primes, try2) > -1 &&
+                Algorithm.binSearch(primes, try3) > -1 &&
+                Algorithm.binSearch(primes, try4) > -1)
+                    trips.add(new int[] {pairs[indexList][0], pairs[indexList][1], primes[i]});
+        }
+        
+        int[][] ret = new int[trips.size()][3];
+        for(int i = 0; i < trips.size(); i++)
+        {
+            ret[i] = trips.get(i);
+        }
+
+        return ret;
+    }
+
+    public static int[][] findPairs(int upperBound)
+    {
+        ArrayList<int[]> pairs = new ArrayList<int[]>();
+
+        for(int i = 1; i < upperBound - 1; i++)
+        {
+            for(int j = i + 1; j < upperBound; j++)
+            {
+                int try1 = concat(primes[i], primes[j]);
+                int try2 = concat(primes[j], primes[i]);
+                if(Algorithm.binSearch(primes, try1) > -1 &&
+                Algorithm.binSearch(primes, try2) > -1)
+                    pairs.add(new int[] {primes[i], primes[j]});
+            }
+        }
+
+        int[][] ret = new int[pairs.size()][2];
+        for(int i = 0; i < pairs.size(); i++)
+        {
+            ret[i] = pairs.get(i);
+        }
+
+        return ret;
+    }
+
+    public static int concat(int left, int right)
+    {
+        String ret = String.valueOf(left) + String.valueOf(right);
+        return Integer.valueOf(ret);
+    }
+}
