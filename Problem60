@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Problem60
 {
-    public static int[] primes = Algorithm.sieve(1000000);
+    public static int[] primes = Algorithm.sieve(10000);
 
     public static void main(String[] args)
     {
@@ -17,20 +17,23 @@ public class Problem60
     public static int[][] findTrips(int[][] pairs, int upperBound)
     {
         ArrayList<int[]> trips = new ArrayList<int[]>();
-        int indexList = 0;
-        for(int i = 1; i < upperBound; i++)
+      
+        for(int indexList = 0; indexList <pairs.length; indexList++)
         {
-            int try1 = concat(primes[i], pairs[indexList][0]); 
-            int try2 = concat(primes[i], pairs[indexList][1]);
-            int try3 = concat(pairs[indexList][0], primes[i]);
-            int try4 = concat(pairs[indexList][1], primes[i]);
-            if(Algorithm.binSearch(primes, try1) > -1 &&
+            for(int i = 1; i < upperBound; i++)
+            {
+                int try1 = concat(primes[i], pairs[indexList][0]); 
+                int try2 = concat(primes[i], pairs[indexList][1]);
+                int try3 = concat(pairs[indexList][0], primes[i]);
+                int try4 = concat(pairs[indexList][1], primes[i]);
+                if(Algorithm.binSearch(primes, try1) > -1 &&
                 Algorithm.binSearch(primes, try2) > -1 &&
                 Algorithm.binSearch(primes, try3) > -1 &&
                 Algorithm.binSearch(primes, try4) > -1)
                     trips.add(new int[] {pairs[indexList][0], pairs[indexList][1], primes[i]});
+            }
         }
-        
+
         int[][] ret = new int[trips.size()][3];
         for(int i = 0; i < trips.size(); i++)
         {
@@ -71,3 +74,5 @@ public class Problem60
         return Integer.valueOf(ret);
     }
 }
+
+
