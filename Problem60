@@ -2,29 +2,32 @@ import java.util.*;
 
 public class Problem60
 {
-    public static int[] primes = Algorithm.primesLessThan(10000000);
+    public static int[] primes = Algorithm.primesLessThan(10000);
 
     public static void main(String[] args)
     {
-        //1129 is the index of prime = 9973 (the greatest 4 digit prime)
-        int[][] pairs = findPairs(1130);
-        System.out.println(findMin(pairs));
-        
-        int[][] trips = findTrips(pairs, 1130);
-        System.out.println(findMin(trips));
-        System.out.println(trips.length);
         /*
-        int[][] quads = findQuads(trips,1130);
+         * 1228 is the index of prime = 9973 (the greatest 4 digit prime)
+         *  Of course the following does not prove the problem in general.
+         *  But the concatanation of two 4 digit numbers is the largest int will store.
+         *  Of coures we could easily switch to longs but the REAL problem is that
+         *  I don't have a fast way of cheching primality for numbers > 1 billion.
+         *  Miller-Rabin would be cheating too...I guess.
+         */
+        
+        int i = primes.length - 1;
+
+        int[][] pairs = findPairs(i);
+        System.out.println(findMin(pairs));
+
+        int[][] trips = findTrips(pairs, i);
+        System.out.println(findMin(trips));
+
+        int[][] quads = findQuads(trips,i);
         System.out.println(findMin(quads));
 
-        int[][] pents = findPents(quads,1130);
-        //System.out.println(findMin(pents));
-         
-        for(int[] arr : trips)
-        {
-            System.out.println(Arrays.toString(arr));
-        }
-        */
+        int[][] pents = findPents(quads,i);
+        System.out.println(findMin(pents));   
 
     }
 
@@ -32,55 +35,24 @@ public class Problem60
     {
         ArrayList<int[]> pents = new ArrayList<int[]>();
 
-        for(int indexList = 0; indexList < quads.length; indexList++)
+        int row = 0;
+        while(row < quads.length - 1)
         {
-            for(int i = 1; i < upperBound; i++)
+            int currentRow = row + 1;
+            while(currentRow < quads.length &&
+            quads[currentRow][2] == quads[row][2])
             {
-                int try1 = concat(primes[i], quads[indexList][0]); 
-                int try2 = concat(primes[i], quads[indexList][1]);
-                int try3 = concat(primes[i], quads[indexList][2]);
-                int try4 = concat(primes[i], quads[indexList][3]);
-                int try5 = concat(quads[indexList][0], primes[i]);
-                int try6 = concat(quads[indexList][1], primes[i]);
-                int try7 = concat(quads[indexList][2], primes[i]);
-                int try8 = concat(quads[indexList][3], primes[i]);
+                int try1 = concat(quads[row][3], quads[currentRow][3]);
+                int try2 = concat(quads[currentRow][3], quads[row][3]);
 
-                /*
-                if(try1 >= 10000000 ||
-                try2 >= 10000000 ||
-                try3 >= 10000000 ||
-                try4 >= 10000000 ||
-                try5 >= 10000000 ||
-                try6 >= 10000000 ||
-                try7 >= 10000000 ||
-                try8 >= 10000000)
-                 */
-                {
-
-                    if(Algorithm.isPrime(try1) &&
-
-                    Algorithm.isPrime(try2) &&
-                    Algorithm.isPrime(try3) &&
-                    Algorithm.isPrime(try4) &&
-                    Algorithm.isPrime(try5) &&
-                    Algorithm.isPrime(try6) &&
-                    Algorithm.isPrime(try7) &&
-                    Algorithm.isPrime(try8) )
-                        pents.add(new int[] {quads[indexList][0], quads[indexList][1], quads[indexList][2], quads[indexList][3], primes[i]});
-                }
-                /*
-                else if(Algorithm.binSearch(primes, try1) > -1 &&
-                Algorithm.binSearch(primes, try2) > -1 &&
-                Algorithm.binSearch(primes, try3) > -1 &&
-                Algorithm.binSearch(primes, try4) > -1 &&
-                Algorithm.binSearch(primes, try5) > -1 &&
-                Algorithm.binSearch(primes, try6) > -1 &&
-                Algorithm.binSearch(primes, try7) > -1 &&
-                Algorithm.binSearch(primes, try8) > -1 )
-                pents.add(new int[] {quads[indexList][0], quads[indexList][1], quads[indexList][2], quads[indexList][3], primes[i]});
-                 */
+                if(Algorithm.isPrime(try1) &&
+                Algorithm.isPrime(try2) )
+                    pents.add(new int[] {quads[row][0], quads[row][1], quads[row][2], quads[row][3], quads[currentRow][3]});
+                currentRow++;
             }
+            row++;
         }
+
         int[][] ret = new int[pents.size()][5];
         for(int i = 0; i < pents.size(); i++)
         {
@@ -94,34 +66,22 @@ public class Problem60
     {
         ArrayList<int[]> quads = new ArrayList<int[]>();
 
-        for(int indexList = 0; indexList < trips.length; indexList++)
+        int row = 0;
+        while(row < trips.length - 1)
         {
-            for(int i = 1; i < upperBound; i++)
+            int currentRow = row + 1;
+            while(currentRow < trips.length
+            && trips[currentRow][1] == trips[row][1])
             {
-                int try1 = concat(primes[i], trips[indexList][0]); 
-                int try2 = concat(primes[i], trips[indexList][1]);
-                int try3 = concat(primes[i], trips[indexList][2]);
-                int try4 = concat(trips[indexList][0], primes[i]);
-                int try5 = concat(trips[indexList][1], primes[i]);
-                int try6 = concat(trips[indexList][2], primes[i]);
+                int try1 = concat(trips[row][2], trips[currentRow][2]);
+                int try2 = concat(trips[currentRow][2], trips[row][2]);
 
-                /*
-                if(Algorithm.binSearch(primes, try1) > -1 &&
-                Algorithm.binSearch(primes, try2) > -1 &&
-                Algorithm.binSearch(primes, try3) > -1 &&
-                Algorithm.binSearch(primes, try4) > -1 &&
-                Algorithm.binSearch(primes, try5) > -1 &&
-                Algorithm.binSearch(primes, try6) > -1)
-                 */   
                 if(Algorithm.isPrime(try1) &&
-
-                Algorithm.isPrime(try2) &&
-                Algorithm.isPrime(try3) &&
-                Algorithm.isPrime(try4) &&
-                Algorithm.isPrime(try5) &&
-                Algorithm.isPrime(try6) )
-                    quads.add(new int[] {trips[indexList][0], trips[indexList][1], trips[indexList][2], primes[i]});
+                Algorithm.isPrime(try2) )
+                    quads.add(new int[] {trips[row][0], trips[row][1], trips[row][2], trips[currentRow][2]});
+                currentRow++;
             }
+            row++;
         }
 
         int[][] ret = new int[quads.size()][4];
@@ -131,6 +91,7 @@ public class Problem60
         }
 
         return ret;
+
     }
 
     public static int[][] findTrips(int[][] pairs, int upperBound)
